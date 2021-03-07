@@ -1,0 +1,2 @@
+export const TOGGLE_AUDIO = 'TOGGLE_MICRO';
+export const TOGGLE_VIDEO = 'TOGGLE_VIDEO';

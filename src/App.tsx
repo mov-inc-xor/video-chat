@@ -1,7 +1,8 @@
 import React from 'react';
 import CreateMeeting from "./pages/CreateMeeting";
 import {Switch, Route} from 'react-router-dom';
-import DeviceCheck from "./pages/DeviceCheck";
+import Meeting from "./pages/Meeting";
+import {useVideoChat, VideoChatProvider} from "./contexts/VideoChatContext";
 
 function App() {
   return (
@@ -11,7 +12,9 @@ function App() {
       </Route>
 
       <Route exact path={`/:room([a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4})`}>
-        <DeviceCheck/>
+        <VideoChatProvider>
+          <Meeting/>
+        </VideoChatProvider>
       </Route>
     </Switch>
   );
