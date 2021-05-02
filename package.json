@@ -1,6 +1,7 @@
 {
   "name": "video-chat",
   "version": "0.1.0",
+  "homepage": "https://mov-inc-xor.github.io/video-chat/",
   "private": true,
   "type": "module",
   "proxy": "http://localhost:5000",
