@@ -1,6 +1,5 @@
 import { makeStyles, Theme } from '@material-ui/core/styles'
 import { Box, Divider, Grid, IconButton } from '@material-ui/core'
-import React from 'react'
 import { RoundSwitcher } from './RoundSwitcher'
 import MicNoneOutlinedIcon from '@material-ui/icons/MicNoneOutlined'
 import MicOffOutlinedIcon from '@material-ui/icons/MicOffOutlined'
@@ -11,7 +10,6 @@ import CallEndIcon from '@material-ui/icons/CallEnd'
 import { isAudioEnabled, isVideoEnabled } from '../redux/selectors'
 import { toggleAudio, toggleVideo } from '../redux/actions'
 import { connect } from 'react-redux'
-import { Link } from 'react-router-dom'
 
 const useStyles = makeStyles((theme: Theme) => ({
   panel: {
