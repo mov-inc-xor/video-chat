@@ -20,6 +20,10 @@ const useTextField = (label: string, initialValue: string = '') => {
     setTimeout(() => setError(false), 2000);
   };
 
+  const clear = () => {
+    setValue('')
+  }
+
   return {
     bind: {
       label,
@@ -30,6 +34,7 @@ const useTextField = (label: string, initialValue: string = '') => {
     empty,
     value: value.trim(),
     alert,
+    clear,
   };
 };
 

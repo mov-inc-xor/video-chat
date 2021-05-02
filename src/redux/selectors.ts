@@ -13,3 +13,7 @@ export const isVideoEnabled = (store: any) => {
   const state = getDevicesState(store);
   return state ? state.video : false;
 }
+
+export const getLocalStream = (store: any) => {
+  return store.stream.localStream
+}

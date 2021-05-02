@@ -1,74 +1,93 @@
-import React from 'react';
-import clsx from 'clsx';
-import {makeStyles, useTheme, Theme, createStyles} from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import BottomPanel from "../components/BottomPanel";
-import {ChatDrawer, drawerWidth} from "../components/ChatDrawer";
+import React, { useState } from 'react'
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import BottomPanel from '../components/BottomPanel'
+import { PeerHook } from '../hooks/usePeer'
+import { LocalVideo } from '../components/LocalVideo'
+import { FullSizeVideo } from '../components/FullSizeVideo'
+import { ChatPanel } from '../components/ChatPanel'
+import { Chat } from '../components/Chat'
+import ChatMessage from '../components/ChatMessage'
+import { connect } from 'react-redux'
+import { isAudioEnabled, isVideoEnabled } from '../redux/selectors'
+import { useEffect } from 'react'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
+    main: {
+      display: 'flex',
+      width: '100%',
+      height: '100%',
+    },
     root: {
       display: 'flex',
       height: '100vh',
+      justifyContent: 'space-between',
     },
-    title: {
-      flexGrow: 1,
-    },
-    hide: {
-      display: 'none',
-    },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      marginRight: -drawerWidth,
-    },
-    contentShift: {
-      transition: theme.transitions.create('margin', {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginRight: 0,
-    },
-  }),
-);
+  })
+)
 
-function VideoChat() {
-  const classes = useStyles();
-  const [chatOpen, setChatOpen] = React.useState(false);
+type MeetingPageProps = {
+  peer: PeerHook
+  localVideoRef: React.RefObject<HTMLVideoElement>
+  remoteVideoRef: React.RefObject<HTMLVideoElement>
+  audioEnabled: boolean
+  videoEnabled: boolean
+}
+
+function MeetingPage({
+  peer,
+  localVideoRef,
+  remoteVideoRef,
+  audioEnabled,
+  videoEnabled,
+}: MeetingPageProps) {
+  const classes = useStyles()
+  const [chatOpened, setChatOpened] = useState(false)
+
+  useEffect(() => {
+    peer.setAudio(audioEnabled)
+  }, [peer, audioEnabled])
+
+  useEffect(() => {
+    peer.setVideo(videoEnabled)
+  }, [peer, videoEnabled])
 
   return (
     <div className={classes.root}>
-      <CssBaseline/>
-      <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: chatOpen,
-        })}
-      >
-        {/*<div className={classes.drawerHeader}/>*/}
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
-          facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-          gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
-          donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-          Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
-          imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
-          arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-          donec massa sapien faucibus et molestie ac.
-        </Typography>
+      <CssBaseline />
+      <main className={classes.main}>
+        <LocalVideo ref={localVideoRef} />
+        <FullSizeVideo ref={remoteVideoRef} />
       </main>
 
-      <ChatDrawer open={chatOpen} onClose={() => setChatOpen(false)} users={[]} />
+      <ChatPanel open={chatOpened} onClose={() => setChatOpened(false)}>
+        <Chat onSend={(text) => peer.sendMessage(text)}>
+          {peer.messages.map((msg) => (
+            <ChatMessage
+              name={peer.id === msg.fromID ? 'Вы' : 'Собеседник'}
+              key={msg.id}
+              text={msg.text}
+              time={msg.time}
+            />
+          ))}
+        </Chat>
+      </ChatPanel>
 
-      <BottomPanel onChatOpen={() => setChatOpen(true)} />
+      <BottomPanel toggleChatOpened={() => setChatOpened(!chatOpened)} endCall={peer.endCall} />
+
+      {/*<Backdrop open={!meeting.connected}>*/}
+      {/*  <CircularProgress color="inherit" />*/}
+      {/*</Backdrop>*/}
     </div>
-  );
+  )
 }
 
-export default VideoChat;
+const mapStateToProps = (state: any) => {
+  const audioEnabled = isAudioEnabled(state);
+  const videoEnabled = isVideoEnabled(state);
+
+  return {audioEnabled, videoEnabled};
+};
+
+export default connect(mapStateToProps)(MeetingPage);

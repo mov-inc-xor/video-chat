@@ -2,8 +2,8 @@ import {TOGGLE_AUDIO, TOGGLE_VIDEO} from "../actionTypes";
 import {Action} from "../actions";
 
 const initialState = {
-  audio: false,
-  video: false,
+  audio: true,
+  video: true,
 };
 
 type State = {

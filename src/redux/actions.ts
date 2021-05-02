@@ -1,4 +1,8 @@
-import {TOGGLE_AUDIO, TOGGLE_VIDEO} from "./actionTypes";
+import {
+  TOGGLE_AUDIO,
+  TOGGLE_VIDEO,
+  SET_LOCAL_STREAM
+} from "./actionTypes";
 
 export type Action = {
   type: string,
@@ -12,3 +16,8 @@ export const toggleAudio = (): Action => ({
 export const toggleVideo = (): Action => ({
   type: TOGGLE_VIDEO,
 });
+
+export const setLocalStream = (stream: MediaStream): Action => ({
+  type: SET_LOCAL_STREAM,
+  payload: stream,
+})

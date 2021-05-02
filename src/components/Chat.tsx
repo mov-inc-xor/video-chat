@@ -2,10 +2,7 @@ import {Box, Grid} from "@material-ui/core";
 import {makeStyles, Theme} from "@material-ui/core/styles";
 import ChatSendPanel from "./ChatSendPanel";
 import useTextField from "../hooks/useTextField";
-
-type ChatProps = {
-  children?: React.ReactNode,
-}
+import React from "react"
 
 const useStyles = makeStyles((theme: Theme) => ({
   chat: {
@@ -23,9 +20,19 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-function Chat({children}: ChatProps) {
+type ChatProps = {
+  children?: React.ReactNode,
+  onSend: (text: string) => void,
+}
+
+export function Chat({children, onSend}: ChatProps) {
   const classes = useStyles();
   const messageTextField = useTextField('Сообщение');
+
+  const send = (text: string) => {
+    onSend(text)
+    messageTextField.clear()
+  }
 
   return (
     <Box className={classes.chat}>
@@ -35,9 +42,7 @@ function Chat({children}: ChatProps) {
         </Grid>
       </Box>
 
-      <ChatSendPanel {...messageTextField.bind}/>
+      <ChatSendPanel {...messageTextField.bind} onSend={send}/>
     </Box>
   );
 }
-
-export default Chat;

@@ -1,8 +1,8 @@
-import {Box, IconButton, Input, TextField} from "@material-ui/core";
-import React, {ChangeEvent} from "react";
+import { Box, IconButton, TextField } from '@material-ui/core'
+import React, { ChangeEvent } from 'react'
 
-import SendIcon from '@material-ui/icons/Send';
-import {makeStyles, Theme} from "@material-ui/core/styles";
+import SendIcon from '@material-ui/icons/Send'
+import { makeStyles, Theme } from '@material-ui/core/styles'
 
 const useStyles = makeStyles((theme: Theme) => ({
   box: {
@@ -16,17 +16,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
     paddingRight: theme.spacing(1),
-  }
+  },
 }))
 
 type ChatSendPanelProps = {
-  value: string,
-  onChange: (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void,
-  label: string,
+  value: string
+  onChange: (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => void
+  label: string
+  onSend: (text: string) => void
 }
 
-function ChatSendPanel({value, onChange, label}: ChatSendPanelProps) {
-  const classes = useStyles();
+function ChatSendPanel({ value, onChange, label, onSend }: ChatSendPanelProps) {
+  const classes = useStyles()
 
   return (
     <Box className={classes.box}>
@@ -41,11 +42,11 @@ function ChatSendPanel({value, onChange, label}: ChatSendPanelProps) {
           shrink: true,
         }}
       />
-      <IconButton color={'primary'} onClick={() => {}}>
+      <IconButton color={'primary'} onClick={() => onSend(value)}>
         <SendIcon />
       </IconButton>
     </Box>
   )
 }
 
-export default ChatSendPanel;
+export default ChatSendPanel

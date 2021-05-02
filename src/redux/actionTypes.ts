@@ -1,2 +1,3 @@
-export const TOGGLE_AUDIO = 'TOGGLE_MICRO';
-export const TOGGLE_VIDEO = 'TOGGLE_VIDEO';
+export const TOGGLE_AUDIO = 'TOGGLE_MICRO'
+export const TOGGLE_VIDEO = 'TOGGLE_VIDEO'
+export const SET_LOCAL_STREAM = 'SET_STREAM'
