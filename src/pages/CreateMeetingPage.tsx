@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState} from "react"
 
 import {
   Grid,
@@ -11,14 +11,14 @@ import {
   CssBaseline,
   Backdrop,
   CircularProgress,
-} from "@material-ui/core";
+} from "@material-ui/core"
 
-import {makeStyles} from '@material-ui/core/styles';
-import VideoCallIcon from '@material-ui/icons/VideoCall';
-import KeyboardIcon from '@material-ui/icons/Keyboard';
-import useTextField from "../hooks/useTextField";
-import LinkDialog from "../components/LinkDialog";
-import useLinkDialog from "../hooks/useLinkDialog";
+import {makeStyles} from '@material-ui/core/styles'
+import VideoCallIcon from '@material-ui/icons/VideoCall'
+import KeyboardIcon from '@material-ui/icons/Keyboard'
+import useTextField from "../hooks/useTextField"
+import LinkDialog from "../components/LinkDialog"
+import useLinkDialog from "../hooks/useLinkDialog"
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -35,56 +35,39 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
   },
-}));
+}))
 
 function CreateMeeting() {
-  const classes = useStyles();
+  const classes = useStyles()
+  const linkDialog = useLinkDialog()
 
-  const meetingNameTextField = useTextField('Название');
-  const linkDialog = useLinkDialog();
-
-  const [backdropOpened, setBackdropOpened] = useState<boolean>(false);
+  const [backdropOpened, setBackdropOpened] = useState<boolean>(false)
 
   const startMeeting = () => {
-    if (meetingNameTextField.empty()) {
-      meetingNameTextField.alert();
-      return;
-    }
-
-    setBackdropOpened(true);
-
-    const meetingName = meetingNameTextField.value
+    setBackdropOpened(true)
 
     const handleResult = async (result: Response) => {
       if (result.ok) {
-        const json = await result.json();
+        const json = await result.json()
 
         if (json.error) {
-          alert(json.error);
+          alert(json.error)
         }
 
-        linkDialog.setToken(json.token);
-        linkDialog.show();
+        linkDialog.setToken(json.token)
+        linkDialog.show()
       } else {
-        alert(result.statusText);
+        alert(result.statusText)
       }
     }
 
-    //TODO ERRORS
     fetch('/api/room', {
       method: 'post',
-      body: JSON.stringify({
-        meetingName,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
     })
       .then(result => handleResult(result))
       .catch(reason => alert(reason))
-      .finally(() => setBackdropOpened(false));
-
-  };
+      .finally(() => setBackdropOpened(false))
+  }
 
   return (
     <>
@@ -100,16 +83,6 @@ function CreateMeeting() {
               <Typography variant="overline" display="block" gutterBottom>
                 Создайте комнату для видеоконференции
               </Typography>
-            </Grid>
-
-            <Grid item>
-              <TextField {...meetingNameTextField.bind} InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <KeyboardIcon/>
-                  </InputAdornment>
-                ),
-              }} fullWidth/>
             </Grid>
 
             <Grid item>
@@ -134,7 +107,7 @@ function CreateMeeting() {
 
       </Container>
     </>
-  );
+  )
 }
 
-export default CreateMeeting;
+export default CreateMeeting

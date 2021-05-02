@@ -3,10 +3,9 @@ import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import Divider from "@material-ui/core/Divider";
-import {Drawer, Tabs, Typography, Tab, Box} from "@material-ui/core";
+import {Drawer, Tabs, Tab, Box} from "@material-ui/core";
 import {makeStyles, Theme, useTheme} from "@material-ui/core/styles";
 import UsersList from "./UsersList";
-import {useVideoChat} from "../contexts/VideoChatContext";
 import Chat from "./Chat";
 import ChatMessage from "./ChatMessage";
 
@@ -62,6 +61,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 type ChatDrawerProps = {
   open: boolean,
   onClose: () => void,
+  users: ({id: string, name: string})[],
 }
 
 function a11yProps(index: any) {
@@ -71,7 +71,7 @@ function a11yProps(index: any) {
   };
 }
 
-function ChatDrawer({open, onClose}: ChatDrawerProps) {
+function ChatDrawer({open, onClose, users}: ChatDrawerProps) {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -80,8 +80,6 @@ function ChatDrawer({open, onClose}: ChatDrawerProps) {
   const handleChangeTab = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabNumber(newValue);
   };
-
-  const videoChat = useVideoChat();
 
   return (
     <Drawer
@@ -111,7 +109,7 @@ function ChatDrawer({open, onClose}: ChatDrawerProps) {
 
 
       <TabPanel value={tabNumber} index={0}>
-        <UsersList users={videoChat.users}/>
+        <UsersList users={users}/>
       </TabPanel>
 
       <TabPanel value={tabNumber} index={1} className={classes.chatTabPanel}>
