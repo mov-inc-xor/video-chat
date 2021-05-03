@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import BottomPanel from '../components/BottomPanel'
@@ -9,8 +9,19 @@ import { ChatPanel } from '../components/ChatPanel'
 import { Chat } from '../components/Chat'
 import ChatMessage from '../components/ChatMessage'
 import { connect } from 'react-redux'
-import { isAudioEnabled, isVideoEnabled } from '../redux/selectors'
+import {
+  isAudioEnabled,
+  isChatOpened,
+  isNewMessages,
+  isVideoEnabled,
+} from '../redux/selectors'
 import { useEffect } from 'react'
+import {
+  openChat,
+  closeChat,
+  enableMsgBadge,
+  disableMsgBadge,
+} from '../redux/actions'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,11 +29,13 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       width: '100%',
       height: '100%',
+      backgroundColor: '#171717',
     },
     root: {
       display: 'flex',
+      flexDirection: 'column',
       height: '100vh',
-      justifyContent: 'space-between',
+      alignItems: 'center',
     },
   })
 )
@@ -33,6 +46,12 @@ type MeetingPageProps = {
   remoteVideoRef: React.RefObject<HTMLVideoElement>
   audioEnabled: boolean
   videoEnabled: boolean
+  chatOpened: boolean
+  newMessages: boolean
+  openChat: () => void
+  closeChat: () => void
+  enableMsgBadge: (value: boolean) => void
+  disableMsgBadge: () => void
 }
 
 function MeetingPage({
@@ -41,9 +60,14 @@ function MeetingPage({
   remoteVideoRef,
   audioEnabled,
   videoEnabled,
+  chatOpened,
+  newMessages,
+  openChat,
+  closeChat,
+  enableMsgBadge,
+  disableMsgBadge,
 }: MeetingPageProps) {
   const classes = useStyles()
-  const [chatOpened, setChatOpened] = useState(false)
 
   useEffect(() => {
     peer.setAudio(audioEnabled)
@@ -53,6 +77,15 @@ function MeetingPage({
     peer.setVideo(videoEnabled)
   }, [peer, videoEnabled])
 
+  useEffect(() => {
+    enableMsgBadge(peer.messages.length !== 0)
+  }, [peer.messages])
+
+  const toggleChat = () => {
+    openChat()
+    disableMsgBadge()
+  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -61,7 +94,7 @@ function MeetingPage({
         <FullSizeVideo ref={remoteVideoRef} />
       </main>
 
-      <ChatPanel open={chatOpened} onClose={() => setChatOpened(false)}>
+      <ChatPanel open={chatOpened} onClose={closeChat}>
         <Chat onSend={(text) => peer.sendMessage(text)}>
           {peer.messages.map((msg) => (
             <ChatMessage
@@ -74,20 +107,31 @@ function MeetingPage({
         </Chat>
       </ChatPanel>
 
-      <BottomPanel toggleChatOpened={() => setChatOpened(!chatOpened)} endCall={peer.endCall} />
-
-      {/*<Backdrop open={!meeting.connected}>*/}
-      {/*  <CircularProgress color="inherit" />*/}
-      {/*</Backdrop>*/}
+      <BottomPanel
+        toggleChatOpened={toggleChat}
+        endCall={peer.endCall}
+        newMessages={newMessages}
+      />
     </div>
   )
 }
 
 const mapStateToProps = (state: any) => {
-  const audioEnabled = isAudioEnabled(state);
-  const videoEnabled = isVideoEnabled(state);
+  const audioEnabled = isAudioEnabled(state)
+  const videoEnabled = isVideoEnabled(state)
+  const chatOpened = isChatOpened(state)
+  const newMessages = isNewMessages(state)
 
-  return {audioEnabled, videoEnabled};
-};
+  return { audioEnabled, videoEnabled, chatOpened, newMessages }
+}
 
-export default connect(mapStateToProps)(MeetingPage);
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    openChat: () => dispatch(openChat()),
+    closeChat: () => dispatch(closeChat()),
+    enableMsgBadge: (value: boolean) => dispatch(enableMsgBadge(value)),
+    disableMsgBadge: () => dispatch(disableMsgBadge()),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MeetingPage)

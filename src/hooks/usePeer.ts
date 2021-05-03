@@ -28,13 +28,12 @@ type Message = {
 }
 
 export const usePeer: UsePeer = (localVideoRef, remoteVideoRef) => {
-  const peerRef = useRef<Peer>()
-  const connRef = useRef<DataConnection>()
-  const localStream = useRef<MediaStream>()
+  const peerRef = useRef<Peer | null>(null)
+  const connRef = useRef<DataConnection | null>(null)
+  const localStream = useRef<MediaStream | null>(null)
 
   const [id, setId] = useState<string>('...')
   const [speaking, setSpeaking] = useState(false)
-
   const [messages, setMessages] = useState<Message[]>([])
 
   useEffect(() => {
@@ -73,11 +72,11 @@ export const usePeer: UsePeer = (localVideoRef, remoteVideoRef) => {
           })
 
           call.on('close', () => {
-            setSpeaking(false)
+            endCall()
           })
         })
         .catch(() => {
-          setSpeaking(false)
+          endCall()
         })
     })
 
@@ -94,7 +93,7 @@ export const usePeer: UsePeer = (localVideoRef, remoteVideoRef) => {
       connRef.current = peerRef.current.connect(peerId)
 
       if (!connRef.current) {
-        reject(new Error('Не удается начать звонок'))
+        reject(new Error('Не удается начать звонок, обновите страницу'))
         return
       }
 
@@ -130,8 +129,7 @@ export const usePeer: UsePeer = (localVideoRef, remoteVideoRef) => {
           })
 
           call.on('close', () => {
-            setSpeaking(false)
-            reject(new Error('Соединение закрыто'))
+            endCall()
           })
         })
         .catch(() => {
@@ -172,7 +170,9 @@ export const usePeer: UsePeer = (localVideoRef, remoteVideoRef) => {
   }
 
   const endCall = () => {
-    window.location.href = '/'
+    connRef.current?.close()
+    peerRef.current?.disconnect()
+    window.location.reload()
   }
 
   const setAudio = (value: boolean) => {

@@ -1,5 +1,5 @@
 import { makeStyles, Theme } from '@material-ui/core/styles'
-import { Box, Divider, Grid, IconButton } from '@material-ui/core'
+import { Badge, Divider, Grid, IconButton } from '@material-ui/core'
 import { RoundSwitcher } from './RoundSwitcher'
 import MicNoneOutlinedIcon from '@material-ui/icons/MicNoneOutlined'
 import MicOffOutlinedIcon from '@material-ui/icons/MicOffOutlined'
@@ -14,11 +14,11 @@ import { connect } from 'react-redux'
 const useStyles = makeStyles((theme: Theme) => ({
   panel: {
     position: 'absolute',
-    bottom: 0,
-    padding: theme.spacing(1),
-    backgroundColor: 'white',
-    width: '100vw',
-    borderTop: '1px solid #eaeaea',
+    bottom: '15px',
+    background: 'white',
+    borderRadius: '7px',
+    width: 'auto',
+    margin: 'auto',
   },
 }))
 
@@ -29,6 +29,7 @@ type BottomPanelProps = {
   toggleAudio: () => void
   toggleVideo: () => void
   endCall: () => void
+  newMessages: boolean
 }
 
 function BottomPanel({
@@ -38,41 +39,38 @@ function BottomPanel({
   toggleAudio,
   toggleVideo,
   endCall,
+  newMessages,
 }: BottomPanelProps) {
   const classes = useStyles()
 
   return (
-    <Box className={classes.panel}>
-      <Grid container justify={'center'}>
-        <Grid item container alignItems={'center'} justify={'center'}>
-          <RoundSwitcher
-            iconOn={<MicNoneOutlinedIcon />}
-            iconOff={<MicOffOutlinedIcon />}
-            initialValue={audioEnabled}
-            toggle={toggleAudio}
-          />
+    <Grid className={classes.panel} item container>
+      <RoundSwitcher
+        iconOn={<MicNoneOutlinedIcon />}
+        iconOff={<MicOffOutlinedIcon />}
+        initialValue={audioEnabled}
+        toggle={toggleAudio}
+      />
 
-          <RoundSwitcher
-            iconOn={<VideocamOutlinedIcon />}
-            iconOff={<VideocamOffOutlinedIcon />}
-            initialValue={videoEnabled}
-            toggle={toggleVideo}
-          />
+      <RoundSwitcher
+        iconOn={<VideocamOutlinedIcon />}
+        iconOff={<VideocamOffOutlinedIcon />}
+        initialValue={videoEnabled}
+        toggle={toggleVideo}
+      />
 
-          <Divider orientation='vertical' flexItem />
+      <Divider orientation='vertical' flexItem />
 
-          <IconButton color={'secondary'} onClick={endCall}>
-            <CallEndIcon />
-          </IconButton>
+      <IconButton color={'secondary'} onClick={endCall}>
+        <CallEndIcon />
+      </IconButton>
 
-          <IconButton color={'default'} onClick={toggleChatOpened}>
-            {/*<Badge color="secondary" variant="dot" invisible={false}>*/}
-            <TextsmsOutlinedIcon />
-            {/*</Badge>*/}
-          </IconButton>
-        </Grid>
-      </Grid>
-    </Box>
+      <IconButton color={'default'} onClick={toggleChatOpened}>
+        <Badge color='secondary' variant='dot' invisible={!newMessages}>
+          <TextsmsOutlinedIcon />
+        </Badge>
+      </IconButton>
+    </Grid>
   )
 }
 

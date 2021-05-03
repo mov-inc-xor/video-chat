@@ -31,6 +31,8 @@ const useStyles = makeStyles((theme) => ({
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: '#fff',
+    display: 'flex',
+    flexDirection: 'column',
   },
 }))
 
@@ -56,6 +58,11 @@ export function StartPage({ peer }: StartPageProps) {
       .callUser(remotePeerId)
       .catch((reason) => alert(reason))
       .finally(() => setBackdropOpened(false))
+  }
+
+  const endCall = () => {
+    peer.endCall()
+    setBackdropOpened(false)
   }
 
   return (
@@ -90,8 +97,12 @@ export function StartPage({ peer }: StartPageProps) {
           </Grid>
         </Paper>
 
-        <Backdrop className={classes.backdrop} open={backdropOpened}>
+        <Backdrop className={classes.backdrop} open={backdropOpened} onClick={endCall}>
           <CircularProgress color='inherit' />
+          
+          <Typography>
+            Звоним...
+          </Typography>
         </Backdrop>
       </Container>
     </>

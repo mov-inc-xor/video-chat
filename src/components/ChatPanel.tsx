@@ -6,7 +6,7 @@ import Divider from '@material-ui/core/Divider'
 import { Drawer, Box } from '@material-ui/core'
 import { makeStyles, Theme, useTheme } from '@material-ui/core/styles'
 
-export const drawerWidth = 340
+export const drawerWidth = 310
 
 type TabPanelProps = {
   children?: React.ReactNode

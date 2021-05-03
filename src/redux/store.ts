@@ -1,14 +1,14 @@
-import {createStore} from 'redux';
-import rootReducer from './reducers';
+import { createStore } from 'redux'
+import rootReducer from './reducers'
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer)
 
 declare global {
   interface Window {
-    store: any;
+    store: any
   }
 }
 
-window.store = store;
+window.store = store
 
-export default store;
+export default store
